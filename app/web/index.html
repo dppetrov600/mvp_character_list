@@ -1,0 +1,147 @@
+<!doctype html>
+<html lang="ru">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Генератор персонажа D&D 5e (SRD)</title>
+    <link rel="stylesheet" href="/static/styles.css" />
+  </head>
+  <body>
+    <main class="container">
+      <h1>Генератор персонажа D&amp;D 5e (SRD)</h1>
+      <p class="subtitle">Лёгкий UI поверх SRD-only API генерации.</p>
+
+      <section class="card">
+        <form id="generate-form">
+          <div class="form-grid">
+            <label for="level">Уровень</label>
+            <input id="level" name="level" type="number" min="1" max="20" value="1" required />
+
+            <label for="class-index">Класс</label>
+            <select id="class-index" name="class_index" required>
+              <option value="">Загрузка классов...</option>
+            </select>
+
+            <label for="role">Роль</label>
+            <select id="role" name="role">
+              <option value="">Авто</option>
+              <option value="damage">damage</option>
+              <option value="tank">tank</option>
+              <option value="control">control</option>
+              <option value="support">support</option>
+              <option value="skills">skills</option>
+            </select>
+          </div>
+
+          <h3>LLM</h3>
+          <div class="form-grid">
+            <label for="use-llm">Использовать LLM</label>
+            <input id="use-llm" name="use_llm" type="checkbox" />
+
+            <label for="llm-backend">LLM бэкенд</label>
+            <select id="llm-backend" name="llm_backend">
+              <option value="ollama">ollama</option>
+              <option value="openai-compatible">openai-compatible</option>
+            </select>
+
+            <label for="llm-base-url">Базовый URL LLM</label>
+            <input
+              id="llm-base-url"
+              name="llm_base_url"
+              type="text"
+              placeholder="http://localhost:11434"
+            />
+
+            <label for="llm-model">Модель</label>
+            <input
+              id="llm-model"
+              name="llm_model"
+              type="text"
+              placeholder="llama3.1:8b-instruct-q4_K_M"
+            />
+
+            <label for="llm-timeout">Таймаут (сек)</label>
+            <input id="llm-timeout" name="llm_timeout" type="number" min="1" step="1" placeholder="30" />
+          </div>
+
+          <label for="description">Описание персонажа</label>
+          <textarea
+            id="description"
+            name="description"
+            rows="4"
+            placeholder="Например: скрытный разведчик и взломщик с тяжёлым прошлым"
+          ></textarea>
+
+          <section id="equipment-selector" class="equipment-selector" hidden>
+            <h3>Снаряжение класса</h3>
+            <div>
+              <strong>Фиксированное стартовое снаряжение</strong>
+              <ul id="fixed-equipment-list"></ul>
+            </div>
+            <div id="equipment-options-groups"></div>
+          </section>
+
+          <div class="actions">
+            <button id="generate-button" type="submit">Сгенерировать персонажа</button>
+            <span id="loading" class="muted" hidden>Генерация...</span>
+          </div>
+        </form>
+      </section>
+
+      <section id="error-card" class="card error" hidden>
+        <h2>Ошибка</h2>
+        <pre id="error-text"></pre>
+      </section>
+
+      <section id="result-card" class="card" hidden>
+        <h2>Кратко</h2>
+        <p id="summary-text"></p>
+
+        <h2>Характеристики</h2>
+        <table class="stats-table">
+          <thead>
+            <tr>
+              <th>Характеристика</th>
+              <th>Значение</th>
+              <th>Модификатор</th>
+            </tr>
+          </thead>
+          <tbody id="ability-body"></tbody>
+        </table>
+
+        <h2>Навыки</h2>
+        <ul id="skills-list"></ul>
+
+        <h2>Снаряжение</h2>
+        <ul id="equipment-list"></ul>
+        <h3>Пояснение выбора</h3>
+        <ul id="choices-list"></ul>
+
+        <h2>Производные значения</h2>
+        <ul id="derived-list"></ul>
+
+        <section id="asi-section" hidden>
+          <h2>История ASI</h2>
+          <ul id="asi-list"></ul>
+        </section>
+
+        <section id="backstory-section" hidden>
+          <h2>Предыстория</h2>
+          <p id="backstory-text" class="pre-wrap"></p>
+        </section>
+
+        <h2>Принятые решения</h2>
+        <ul id="decisions-list"></ul>
+
+        <h2>Сырой JSON</h2>
+        <div class="actions">
+          <button id="copy-json" type="button">Скопировать JSON</button>
+          <span id="copy-status" class="muted" aria-live="polite"></span>
+        </div>
+        <pre id="raw-json" class="json"></pre>
+      </section>
+    </main>
+
+    <script src="/static/app.js"></script>
+  </body>
+</html>
